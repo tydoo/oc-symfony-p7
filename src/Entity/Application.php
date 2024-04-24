@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ApplicationRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ApplicationRepository;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ApplicationRepository::class)]
 class Application {
     #[ORM\Id]
@@ -67,5 +69,10 @@ class Application {
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void {
+        $this->createdAt = $this->createdAt ?? new DateTimeImmutable();
     }
 }

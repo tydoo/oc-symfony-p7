@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client {
     #[ORM\Id]
@@ -26,13 +28,23 @@ class Client {
     /**
      * @var Collection<int, User>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'client', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: User::class,
+        mappedBy: 'client',
+        orphanRemoval: true,
+        cascade: ['persist', 'remove']
+    )]
     private Collection $users;
 
     /**
      * @var Collection<int, Application>
      */
-    #[ORM\OneToMany(targetEntity: Application::class, mappedBy: 'client', orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: Application::class,
+        mappedBy: 'client',
+        orphanRemoval: true,
+        cascade: ['persist', 'remove']
+    )]
     private Collection $applications;
 
     public function __construct() {
@@ -126,5 +138,10 @@ class Client {
         }
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void {
+        $this->createdAt = $this->createdAt ?? new DateTimeImmutable();
     }
 }

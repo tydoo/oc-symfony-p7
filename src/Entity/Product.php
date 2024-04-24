@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeImmutable;
 use ApiPlatform\Metadata\Get;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,6 +16,7 @@ use ApiPlatform\Metadata\GetCollection;
         new GetCollection()
     ],
 )]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product {
     #[ORM\Id]
@@ -154,5 +156,10 @@ class Product {
         $this->releasedAt = $releasedAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void {
+        $this->createdAt = $this->createdAt ?? new DateTimeImmutable();
     }
 }
