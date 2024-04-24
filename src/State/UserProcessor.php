@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\EntityManagerInterface;
 use ApiPlatform\State\ProcessorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class UserProcessor implements ProcessorInterface {
 
@@ -17,14 +18,14 @@ class UserProcessor implements ProcessorInterface {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []) {
-
-        if ($data instanceof User) {
+        if ($data instanceof User && $data->getName() !== null) {
             $data->setClient($this->security->getUser());
 
             $this->entityManager->persist($data);
             $this->entityManager->flush();
+            return $data;
         }
 
-        return $data;
+        throw new BadRequestException('Name is required');
     }
 }
