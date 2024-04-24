@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
-use Ramsey\Uuid\Uuid;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Faker\Provider\Uuid;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -192,7 +192,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface {
     #[ORM\PrePersist]
     public function onPrePersist(): void {
         $this->createdAt = $this->createdAt ?? new DateTimeImmutable();
-        $this->uuid = $this->uuid ?? Uuid::uuid4()->toString();
+        $this->uuid = $this->uuid ?? Uuid::uuid();
     }
 
     public function getJwt(): ?string {
