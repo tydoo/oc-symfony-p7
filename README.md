@@ -26,11 +26,7 @@
 ```bash
 composer install
 docker-compose up -d
-symfony console importmap:install
 symfony console d:m:m --no-interaction
 symfony console d:f:l --no-interaction
 symfony serve -d
 ```
-
-### Email
-Pour lire les emails, cliquez sur "Webmail" dans la bare de débug.
