@@ -8,11 +8,19 @@ use Faker\Generator;
 use App\Entity\Client;
 use DateTimeImmutable;
 use App\Entity\Product;
-use App\Entity\Application;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture {
+
+    public function __construct(
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly JWTTokenManagerInterface $JWTManager
+    ) {
+    }
+
     public function load(ObjectManager $manager): void {
         $faker = Factory::create();
 
@@ -104,15 +112,12 @@ class AppFixtures extends Fixture {
             $clientDateCreation = DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-2 years', '-1 day'));
             $client = (new Client())
                 ->setName($faker->company())
+                ->setUuid($faker->uuid())
                 ->setCreatedAt($clientDateCreation)
-                ->setExpiredAt(DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 day', '+2 years')))
-                ->addApplication(
-                    (new Application)
-                        ->setCreatedAt(DateTimeImmutable::createFromMutable($faker->dateTimeBetween($clientDateCreation->format('c'), 'now')))
-                        ->setName($faker->word())
-                        ->setToken($faker->uuid())
-                );
+                ->setExpiredAt(DateTimeImmutable::createFromMutable($faker->dateTimeBetween('+1 day', '+2 years')));
 
+            $client->setPassword($this->passwordHasher->hashPassword($client, '112233'));
+            $client->setJwt($this->JWTManager->create($client));
 
             for ($u = 0; $u < $faker->numberBetween(50, 500); $u++) {
                 $client->addUser(
