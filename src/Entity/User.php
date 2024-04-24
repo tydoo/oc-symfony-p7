@@ -37,6 +37,7 @@ class User {
     private ?Client $client = null;
 
     #[ORM\Column]
+    #[ApiProperty(writable: false)]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int {
