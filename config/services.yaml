@@ -24,4 +24,6 @@ services:
     # please note that last definitions always *replace* previous ones
 
     App\Doctrine\CurrentClientForUserExtension:
-        tags: ['api_platform.doctrine.orm.query_extension.collection', 'api_platform.doctrine.orm.query_extension.item']
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }
