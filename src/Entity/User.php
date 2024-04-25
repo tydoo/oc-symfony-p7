@@ -35,6 +35,7 @@ class User {
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 3, max: 255)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
     #[ORM\Column]

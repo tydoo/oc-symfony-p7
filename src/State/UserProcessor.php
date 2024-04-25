@@ -18,7 +18,7 @@ class UserProcessor implements ProcessorInterface {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []) {
-        if ($data instanceof User && $data->getName() !== null) {
+        if ($data instanceof User) {
             $data->setClient($this->security->getUser());
 
             $this->entityManager->persist($data);
